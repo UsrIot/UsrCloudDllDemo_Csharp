@@ -13,18 +13,27 @@ namespace UsrCloudDllDemo_Csharp
     public partial class FormCloudDllDemo : Form
     {
         TUSR_ConnAckEvent FConnAck_CBF;
-        TUSR_SubAckEvent FSubAck_CBF;
-        TUSR_UnSubAckEvent FUnSubAck_CBF;
+        TUSR_SubscribeAckEvent FSubscribeAck_CBF;
+        TUSR_UnSubscribeAckEvent FUnSubscribeAck_CBF;
         TUSR_PubAckEvent FPubAck_CBF;
-        TUSR_OnRcvEvent FRcv_CBF;
+        TUSR_RcvParsedEvent FRcvParsedDataPointPush_CBF;
+        TUSR_RcvParsedEvent FRcvParsedDevStatusPush_CBF;
+        TUSR_RcvParsedEvent FRcvParsedDevAlarmPush_CBF;
+        TUSR_RcvParsedEvent FRcvParsedOptionResponseReturn_CBF;
+        TUSR_RcvRawFromDevEvent FRcvRawFromDev_CBF;
+
         public FormCloudDllDemo()
         {
             InitializeComponent();
             FConnAck_CBF = new TUSR_ConnAckEvent(ConnAck_CBF);
-            FSubAck_CBF = new TUSR_SubAckEvent(SubAck_CBF);
-            FUnSubAck_CBF = new TUSR_UnSubAckEvent(UnSubAck_CBF);
+            FSubscribeAck_CBF = new TUSR_SubscribeAckEvent(SubscribeAck_CBF);
+            FUnSubscribeAck_CBF = new TUSR_UnSubscribeAckEvent(UnSubscribeAck_CBF);
             FPubAck_CBF = new TUSR_PubAckEvent(PubAck_CBF);
-            FRcv_CBF = new TUSR_OnRcvEvent(Rcv_CBF);
+            FRcvParsedDataPointPush_CBF = new TUSR_RcvParsedEvent(RcvParsedDataPointPush_CBF);
+            FRcvParsedDevStatusPush_CBF = new TUSR_RcvParsedEvent(RcvParsedDevStatusPush_CBF);
+            FRcvParsedDevAlarmPush_CBF = new TUSR_RcvParsedEvent(RcvParsedDevAlarmPush_CBF);
+            FRcvParsedOptionResponseReturn_CBF = new TUSR_RcvParsedEvent(RcvParsedOptionResponseReturn_CBF);
+            FRcvRawFromDev_CBF = new TUSR_RcvRawFromDevEvent(RcvRawFromDev_CBF);
         }
 
         //初始化   
@@ -37,10 +46,14 @@ namespace UsrCloudDllDemo_Csharp
             {
                 Log("初始化成功", true);
                 USR_OnConnAck(FConnAck_CBF);
-                USR_OnSubAck(FSubAck_CBF);
-                USR_OnUnSubAck(FUnSubAck_CBF);
+                USR_OnSubscribeAck(FSubscribeAck_CBF);
+                USR_OnUnSubscribeAck(FUnSubscribeAck_CBF);
                 USR_OnPubAck(FPubAck_CBF);
-                USR_OnRcv(FRcv_CBF);
+                USR_OnRcvParsedDataPointPush(FRcvParsedDataPointPush_CBF);
+                USR_OnRcvParsedDevStatusPush(FRcvParsedDevStatusPush_CBF);
+                USR_OnRcvParsedDevAlarmPush(FRcvParsedDevAlarmPush_CBF);
+                USR_OnRcvParsedOptionResponseReturn(FRcvParsedOptionResponseReturn_CBF);
+                USR_OnRcvRawFromDev(FRcvRawFromDev_CBF);
             }
             else
             {
@@ -51,13 +64,13 @@ namespace UsrCloudDllDemo_Csharp
         //释放
         private void buttonRelease_Click(object sender, EventArgs e)
         {
-            if(USR_Release())
+            if (USR_Release())
             {
                 Log("释放成功", true);
             }
             else
             {
-                Log("释放失败", true); 
+                Log("释放失败", true);
             }
         }
 
@@ -86,26 +99,26 @@ namespace UsrCloudDllDemo_Csharp
                 Log("已断开", true);
             }
         }
-       
-        //订阅
+
+        //订阅设备原始数据流
         private void button7_Click(object sender, EventArgs e)
         {
             string devId = textBox5.Text;
-            int messageId = USR_Subscribe(devId);
-            if(messageId > -1)
+            int messageId = USR_SubscribeDevRaw(devId);
+            if (messageId > -1)
             {
-                Log("订阅已发起", true);  
-            }       
+                Log("订阅已发起  MsgId:" + messageId.ToString(), true);
+            }
         }
 
         //取消订阅
         private void button8_Click(object sender, EventArgs e)
         {
             string devId = textBox5.Text;
-            int messageId = USR_UnSubscribe(devId);
+            int messageId = USR_UnSubscribeDevRaw(devId);
             if (messageId > -1)
             {
-                Log("取消订阅已发起", true);
+                Log("取消订阅已发起  MsgId:" + messageId.ToString(), true);
             }
         }
 
@@ -123,7 +136,7 @@ namespace UsrCloudDllDemo_Csharp
         {
             string devId = textBox6.Text;
             byte[] byteArray;
-            if (checkBox_Hex.Checked== true)
+            if (checkBox_Hex.Checked == true)
             {
                 byteArray = HexStringToByteArray(textBox7.Text);
             }
@@ -131,9 +144,9 @@ namespace UsrCloudDllDemo_Csharp
             {
                 byteArray = System.Text.Encoding.Default.GetBytes(textBox7.Text);
             }
-             
-            int messageId = USR_Publish(devId, byteArray, byteArray.Length);
-            if (messageId > -1) 
+
+            int messageId = USR_PublishRawToDev(devId, byteArray, byteArray.Length);
+            if (messageId > -1)
             {
                 Log("消息已推送 MsgId:" + messageId.ToString(), true);
             }
@@ -143,26 +156,26 @@ namespace UsrCloudDllDemo_Csharp
         {
             richTextBoxLog.Clear();
         }
-        
+
         private void Log(string str, Boolean bInsTime = false)
         {
             if (bInsTime)
             {
                 richTextBoxLog.AppendText("\n------" + DateTime.Now.ToLongTimeString().ToString() + "------\n");
             }
-            richTextBoxLog.AppendText(str+ "\n");
+            richTextBoxLog.AppendText(str + "\n");
             if (checkBox1.Checked)
             {
-                richTextBoxLog.SelectionStart = richTextBoxLog.Text.Length; 
-                richTextBoxLog.ScrollToCaret();  
+                richTextBoxLog.SelectionStart = richTextBoxLog.Text.Length;
+                richTextBoxLog.ScrollToCaret();
             }
-        } 
- 
+        }
+
         private void ConnAck_CBF(int returnCode, IntPtr description)
         {
-            Log("【连接回调】",true);
+            Log("【连接事件】", true);
             Log("returnCode: " + returnCode.ToString() + "  " + Marshal.PtrToStringAuto(description));
-            if (returnCode==0)
+            if (returnCode == 0)
             {
                 Log("连接成功");
             }
@@ -173,29 +186,37 @@ namespace UsrCloudDllDemo_Csharp
 
         }
 
-        private void SubAck_CBF(int messageID, IntPtr devId, IntPtr returnCode)
-        {
-            string sDevId= Marshal.PtrToStringAuto(devId);
-            string sReturnCode = Marshal.PtrToStringAuto(returnCode); 
-            string[] devIdArray = sDevId.Split(',');
-            string[] retCodeArray = sReturnCode.Split(',');
-            int len = devIdArray.Length;
 
-            Log("【订阅回调】", true);
+        /* 自定义回调函数,用于判断订阅结果 */
+        private void SubscribeAck_CBF(int messageID, IntPtr SubFunName, IntPtr SubParam, IntPtr returnCode)
+        {
+            string sSubFunName = Marshal.PtrToStringAuto(SubFunName);
+            string sSubParam = Marshal.PtrToStringAuto(SubParam);
+            string sReturnCode = Marshal.PtrToStringAuto(returnCode);
+            string[] SubParamArray = sSubParam.Split(',');
+            string[] retCodeArray = sReturnCode.Split(',');
+            int len = SubParamArray.Length;
+            Log("【订阅事件】", true);
             Log("MsgId:" + messageID.ToString());
+            Log("函数名称:" + sSubFunName);
             for (int i = 0; i < len; ++i)
             {
-                Log("设备：" + devIdArray[i] + "  订阅结果：" + retCodeArray[i]);
+                Log("设备ID(或用户名)：" + SubParamArray[i] +
+                 "  订阅结果：" + retCodeArray[i]);
             }
         }
 
-        private void UnSubAck_CBF(int messageID, IntPtr devId)
+        /* 自定义回调函数,用于判断取消订阅结果 */
+        private void UnSubscribeAck_CBF(int messageID, IntPtr UnSubFunName, IntPtr UnSubParam)
         {
-            string sDevId = Marshal.PtrToStringAuto(devId);
-            Log("【取消订阅回调】", true);
+            string sUnSubFunName = Marshal.PtrToStringAuto(UnSubFunName);
+            string sUnSubParam = Marshal.PtrToStringAuto(UnSubParam);
+            Log("【取消订阅事件】", true);
             Log("MsgId:" + messageID.ToString());
-            Log("设备：" + sDevId);          
+            Log("函数名称：" + sUnSubFunName);
+            Log("设备ID或用户名：" + sUnSubParam);
         }
+
 
         protected void PubAck_CBF(int messageID)
         {
@@ -203,59 +224,331 @@ namespace UsrCloudDllDemo_Csharp
             Log("MsgId:" + messageID.ToString());
         }
 
-        private void Rcv_CBF(int messageID, IntPtr devId, IntPtr pData, int DataLen)
+        /* 自定义回调函数,用于接收数据点值推送 */
+        private void RcvParsedDataPointPush_CBF(
+            int messageID, IntPtr DevId, IntPtr JsonStr)
+        {
+            string sDevId = Marshal.PtrToStringAuto(DevId);
+            string sJsonStr = Marshal.PtrToStringAuto(JsonStr);
+            Log("【设备数据点值推送事件】", true);
+            Log("设备ID   : " + sDevId);
+            Log("MsgId    : " + messageID.ToString());
+            Log("JSON数据: " + sJsonStr);
+
+            //todo json解析
+        }
+
+        /* 自定义回调函数,用于接收上下线推送 */
+        private void RcvParsedDevStatusPush_CBF(
+            int messageID, IntPtr DevId, IntPtr JsonStr)
+        {
+            string sDevId = Marshal.PtrToStringAuto(DevId);
+            string sJsonStr = Marshal.PtrToStringAuto(JsonStr);
+            Log("【设备上下线推送事件】", true);
+            Log("设备ID   : " + sDevId);
+            Log("MsgId    : " + messageID.ToString());
+            Log("JSON数据: " + sJsonStr);
+        }
+
+        /* 自定义回调函数,用于接收报警推送 */
+        private void RcvParsedDevAlarmPush_CBF(
+            int messageID, IntPtr DevId, IntPtr JsonStr)
+        {
+            string sDevId = Marshal.PtrToStringAuto(DevId);
+            string sJsonStr = Marshal.PtrToStringAuto(JsonStr);
+            Log("【设备报警推送事件】", true);
+            Log("设备ID   : " + sDevId);
+            Log("MsgId    : " + messageID.ToString());
+            Log("JSON数据: " + sJsonStr);
+        }
+
+        /* 自定义回调函数,用于接收数据点操作应答 */
+        private void RcvParsedOptionResponseReturn_CBF(
+            int messageID, IntPtr DevId, IntPtr JsonStr)
+        {
+            string sDevId = Marshal.PtrToStringAuto(DevId);
+            string sJsonStr = Marshal.PtrToStringAuto(JsonStr);
+            Log("【设备数据点操作应答事件】", true);
+            Log("设备ID   : " + sDevId);
+            Log("MsgId    : " + messageID.ToString());
+            Log("JSON数据: " + sJsonStr);
+        }
+
+        /* 自定义回调函数,用于接收设备原始数据流 */
+        private void RcvRawFromDev_CBF(
+            int messageID, IntPtr devId, IntPtr pData, int DataLen)
         {
             string sDevId = Marshal.PtrToStringAuto(devId);
             byte[] byteArr = new byte[DataLen];
             Marshal.Copy(pData, byteArr, 0, DataLen);
-            string sHex = BitConverter.ToString(byteArr).Replace("-", " ");
-            Log("【接收回调】", true);
-            Log("设备ID   : "+ sDevId);
+            string sHex = BitConverter.ToString(byteArr).Replace(
+                "-", " ");
+            Log("【接收数据流事件】", true);
+            Log("设备ID   : " + sDevId);
             Log("MsgId    : " + messageID.ToString());
             Log("接收数据(Hex): " + sHex);
         }
-  
-        //获取版本
+
+
+        ///////////////////////////////
+        ///////  初始化和释放  ////////
+        ///////////////////////////////
+
+        /// <summary>
+        /// 获取版本
+        /// </summary>
+        /// <returns></returns>
         [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_GetVer", CallingConvention = CallingConvention.StdCall)]
         public static extern int USR_GetVer();
-        //初始化
+        /// <summary>
+        /// 初始化
+        /// </summary>
+        /// <param name="host"></param>
+        /// <param name="port"></param>
+        /// <param name="vertion"></param>
+        /// <returns></returns>
         [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_Init", CallingConvention = CallingConvention.StdCall)]
         public static extern bool USR_Init(string host, ushort port, int vertion);
-        //释放
+        /// <summary>
+        /// 释放
+        /// </summary>
+        /// <returns></returns>
         [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_Release", CallingConvention = CallingConvention.StdCall)]
         public static extern bool USR_Release();
-        //连接回调
+
+        ///////////////////////////////
+        ////////  连接和断开  /////////
+        ///////////////////////////////
+
+        /// <summary>
+        /// 连接回调
+        /// </summary>
+        /// <param name="returnCode"></param>
+        /// <param name="description"></param>
         public delegate void TUSR_ConnAckEvent(int returnCode, IntPtr description);
         [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_OnConnAck", CallingConvention = CallingConvention.StdCall)]
         public static extern bool USR_OnConnAck(TUSR_ConnAckEvent OnConnAck);
-        //连接
+        /// <summary>
+        /// 连接
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
         [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_Connect", CallingConvention = CallingConvention.StdCall)]
         public static extern bool USR_Connect(string username, string password);
-        //断开
+        /// <summary>
+        /// 断开
+        /// </summary>
+        /// <returns></returns>
         [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_DisConnect", CallingConvention = CallingConvention.StdCall)]
         public static extern bool USR_DisConnect();
-        //订阅回调
+
+        ///////////////////////////////
+        //////  订阅和取消订阅  ///////
+        ///////////////////////////////
+
+        /// <summary>
+        /// 订阅回调
+        /// </summary>
+        /// <param name="messageID">消息ID</param>
+        /// <param name="SubFunName">函数名称,用于判断用户执行的哪个订阅函数, 得到了服务器的回应。可能的取值有:SubscribeDevParsed,SubscribeUserParsed,SubscribeDevRaw,SubscribeUserRaw</param>
+        /// <param name="SubParam">SubParam值跟执行的订阅函数有关:如果订阅的是”单个设备的消息”, 则SubParam为设备ID;如果订阅的是”用户所有设备的消息”, 则SubParam为用户名</param>
+        /// <param name="returnCode">0、1、2:订阅成功;  128:订阅失败</param>
+        public delegate void TUSR_SubscribeAckEvent(int messageID, IntPtr SubFunName, IntPtr SubParam, IntPtr returnCode);
+        [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_OnSubscribeAck", CallingConvention = CallingConvention.StdCall)]
+        public static extern bool USR_OnSubscribeAck(TUSR_SubscribeAckEvent OnSubscribeAck);
+        /// <summary>
+        /// 取消订阅回调
+        /// </summary>
+        /// <param name="messageID"></param>
+        /// <param name="UnSubFunName"></param>
+        /// <param name="UnSubParam"></param>
+        public delegate void TUSR_UnSubscribeAckEvent(int messageID, IntPtr UnSubFunName, IntPtr UnSubParam);
+        [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_OnUnSubscribeAck", CallingConvention = CallingConvention.StdCall)]
+        public static extern bool USR_OnUnSubscribeAck(TUSR_UnSubscribeAckEvent OnUnSubscribeAck);
+
+        /// <summary>
+        /// 订阅单个设备解析后的数据  【云组态】
+        /// </summary>
+        /// <param name="devId"></param>
+        /// <returns></returns>
+        [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_SubscribeDevParsed", CallingConvention = CallingConvention.StdCall)]
+        public static extern int USR_SubscribeDevParsed(string devId);
+        /// <summary>
+        /// 订阅账户下所有设备解析后的数据  【云组态】
+        /// </summary>
+        /// <param name="Username"></param>
+        /// <returns></returns>
+        [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_SubscribeUserParsed", CallingConvention = CallingConvention.StdCall)]
+        public static extern int USR_SubscribeUserParsed(string Username);
+        /// <summary>
+        /// 取消订阅单个设备解析后的数据  【云组态】
+        /// </summary>
+        /// <param name="DevId"></param>
+        /// <returns></returns>
+        [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_UnSubscribeDevParsed", CallingConvention = CallingConvention.StdCall)]
+        public static extern int USR_UnSubscribeDevParsed(string DevId);
+        /// <summary>
+        /// 取消订阅账户下所有设备解析后的数据  【云组态】
+        /// </summary>
+        /// <param name="Username"></param>
+        /// <returns></returns>
+        [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_UnSubscribeUserParsed", CallingConvention = CallingConvention.StdCall)]
+        public static extern int USR_UnSubscribeUserParsed(string Username);
+
+        /// <summary>
+        /// 订阅单个设备原始数据流 【云交换机】
+        /// </summary>
+        /// <param name="devId"></param>
+        /// <returns></returns>
+        [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_SubscribeDevRaw", CallingConvention = CallingConvention.StdCall)]
+        public static extern int USR_SubscribeDevRaw(string devId);
+        /// <summary>
+        /// 订阅账户下所有设备原始数据流 【云交换机】
+        /// </summary>
+        /// <param name="Username"></param>
+        /// <returns></returns>
+        [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_SubscribeUserRaw", CallingConvention = CallingConvention.StdCall)]
+        public static extern int USR_SubscribeUserRaw(string Username);
+        /// <summary>
+        /// 取消订阅单个设备原始数据流 【云交换机】
+        /// </summary>
+        /// <param name="DevId"></param>
+        /// <returns></returns>
+        [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_UnSubscribeDevRaw", CallingConvention = CallingConvention.StdCall)]
+        public static extern int USR_UnSubscribeDevRaw(string DevId);
+        /// <summary>
+        /// 取消订阅账户下所有设备原始数据流 【云交换机】
+        /// </summary>
+        /// <param name="Username"></param>
+        /// <returns></returns>
+        [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_UnSubscribeUserRaw", CallingConvention = CallingConvention.StdCall)]
+        public static extern int USR_UnSubscribeUserRaw(string Username);
+
+        //订阅回调 【不再推荐使用】
         public delegate void TUSR_SubAckEvent(int messageID, IntPtr devId, IntPtr returnCode);
         [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_OnSubAck", CallingConvention = CallingConvention.StdCall)]
         public static extern bool USR_OnSubAck(TUSR_SubAckEvent OnSubAck);
-        //订阅
+        //订阅 【不再推荐使用】
         [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_Subscribe", CallingConvention = CallingConvention.StdCall)]
         public static extern int USR_Subscribe(string devId);
-        //取消订阅回调
+        //取消订阅回调 【不再推荐使用】
         public delegate void TUSR_UnSubAckEvent(int messageID, IntPtr devId);
         [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_OnUnSubAck", CallingConvention = CallingConvention.StdCall)]
         public static extern bool USR_OnUnSubAck(TUSR_UnSubAckEvent OnUnSubAck);
-        //取消订阅
+        //取消订阅 【不再推荐使用】
         [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_UnSubscribe", CallingConvention = CallingConvention.StdCall)]
         public static extern int USR_UnSubscribe(string devId);
-        //推送回调
+
+        ///////////////////////////////
+        /////////  推送消息 ///////////
+        ///////////////////////////////
+        /// <summary>
+        /// 推送回调
+        /// </summary>
+        /// <param name="MessageID"></param>
         public delegate void TUSR_PubAckEvent(int MessageID);
         [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_OnPubAck", CallingConvention = CallingConvention.StdCall)]
         public static extern bool USR_OnPubAck(TUSR_PubAckEvent OnPubAck);
-        //推送
+
+        /// <summary>
+        /// 设置单台设备数据点值【云组态】
+        /// </summary>
+        /// <param name="DevId"></param>
+        /// <param name="PointId"></param>
+        /// <param name="Value"></param>
+        /// <returns></returns>
+        [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_PublishParsedSetDataPoint", CallingConvention = CallingConvention.StdCall)]
+        public static extern int USR_PublishParsedSetDataPoint(string DevId, string PointId, string Value);
+        /// <summary>
+        /// 查询单台设备数据点值【云组态】
+        /// </summary>
+        /// <param name="DevId"></param>
+        /// <param name="PointId"></param>
+        /// <returns></returns>
+        [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_PublishParsedQueryDataPoint", CallingConvention = CallingConvention.StdCall)]
+        public static extern int USR_PublishParsedQueryDataPoint(string DevId, string PointId);
+
+        /// <summary>
+        /// 向单台设备推送原始数据流 【云交换机】
+        /// </summary>
+        /// <param name="DevId"></param>
+        /// <param name="pData"></param>
+        /// <param name="DataLen"></param>
+        /// <returns></returns>
+        [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_PublishRawToDev", CallingConvention = CallingConvention.StdCall)]
+        public static extern int USR_PublishRawToDev(string DevId, byte[] pData, int DataLen);
+
+        /// <summary>
+        /// 向账户下所有设备推送原始数据流 【云交换机】
+        /// </summary>
+        /// <param name="Username"></param>
+        /// <param name="pData"></param>
+        /// <param name="DataLen"></param>
+        /// <returns></returns>
+        [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_PublishRawToUser", CallingConvention = CallingConvention.StdCall)]
+        public static extern int USR_PublishRawToUser(string Username, byte[] pData, int DataLen);
+
+        //推送【不再推荐使用】
         [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_Publish", CallingConvention = CallingConvention.StdCall)]
         public static extern int USR_Publish(string DevId, byte[] pData, int DataLen);
-        //接收回调
+
+        ///////////////////////////////
+        /////////  接收消息 ///////////
+        ///////////////////////////////
+        /// <summary>
+        /// 接收设备解析后的数据 事件定义 【云组态】
+        /// </summary>
+        /// <param name="MessageID"></param>
+        /// <param name="DevId"></param>
+        /// <param name="JsonStr"></param>
+        public delegate void TUSR_RcvParsedEvent(int MessageID, IntPtr DevId, IntPtr JsonStr);
+        /// <summary>
+        /// 设置 接收设备数据点推送 回调函数 【云组态】
+        /// </summary>
+        /// <param name="OnRcvParsed"></param>
+        /// <returns></returns>
+        [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_OnRcvParsedDataPointPush", CallingConvention = CallingConvention.StdCall)]
+        public static extern bool USR_OnRcvParsedDataPointPush(TUSR_RcvParsedEvent OnRcvParsed);
+        /// <summary>
+        /// 设置 接收设备上下线推送 回调函数 【云组态】
+        /// </summary>
+        /// <param name="OnRcvParsed"></param>
+        /// <returns></returns>
+        [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_OnRcvParsedDevStatusPush", CallingConvention = CallingConvention.StdCall)]
+        public static extern bool USR_OnRcvParsedDevStatusPush(TUSR_RcvParsedEvent OnRcvParsed);
+        /// <summary>
+        /// 设置 接收设备报警推送 回调函数 【云组态】
+        /// </summary>
+        /// <param name="OnRcvParsed"></param>
+        /// <returns></returns>
+        [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_OnRcvParsedDevAlarmPush", CallingConvention = CallingConvention.StdCall)]
+        public static extern bool USR_OnRcvParsedDevAlarmPush(TUSR_RcvParsedEvent OnRcvParsed);
+        /// <summary>
+        /// 设置 接收设备数据点操作应答 【云组态】
+        /// </summary>
+        /// <param name="OnRcvParsed"></param>
+        /// <returns></returns>
+        [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_OnRcvParsedOptionResponseReturn", CallingConvention = CallingConvention.StdCall)]
+        public static extern bool USR_OnRcvParsedOptionResponseReturn(TUSR_RcvParsedEvent OnRcvParsed);
+
+        /// <summary>
+        /// 接收设备原始数据流 事件定义 【云交换机】 
+        /// </summary>
+        /// <param name="MessageID"></param>
+        /// <param name="DevId"></param>
+        /// <param name="pData"></param>
+        /// <param name="DataLen"></param>
+        public delegate void TUSR_RcvRawFromDevEvent(int MessageID, IntPtr DevId, IntPtr pData, int DataLen);
+        [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_OnRcvRawFromDev", CallingConvention = CallingConvention.StdCall)]
+        /// <summary>
+        /// 设置 接收设备原始数据流 回调函数 【云交换机】
+        /// </summary>
+        /// <param name="OnRcvRawFromDev"></param>
+        /// <returns></returns>
+        public static extern bool USR_OnRcvRawFromDev(TUSR_RcvRawFromDevEvent OnRcvRawFromDev);
+
+        //接收回调 【不再推荐使用】
         public delegate void TUSR_OnRcvEvent(int MessageID, IntPtr DevId, IntPtr pData, int DataLen);
         [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_OnRcv", CallingConvention = CallingConvention.StdCall)]
         public static extern bool USR_OnRcv(TUSR_OnRcvEvent OnRcvEvent);
@@ -270,11 +563,119 @@ namespace UsrCloudDllDemo_Csharp
             System.Diagnostics.Process.Start("http://cloud.usr.cn/sdk/dll/");
         }
 
+        private void linkLabel3_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://console.usr.cn/");
+        }
+
         private void richTextBoxLog_LinkClicked(object sender, LinkClickedEventArgs e)
         {
             System.Diagnostics.Process.Start(e.LinkText);
         }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            string userrname = textBox8.Text;
+            int messageId = USR_SubscribeUserRaw(userrname);
+            if (messageId > -1)
+            {
+                Log("订阅已发起  MsgId:" + messageId.ToString(), true);
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            string userrname = textBox8.Text;
+            int messageId = USR_UnSubscribeUserRaw(userrname);
+            if (messageId > -1)
+            {
+                Log("取消订阅已发起  MsgId:" + messageId.ToString(), true);
+            }
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            string username = textBox9.Text;
+            byte[] byteArray;
+            if (checkBox_Hex.Checked == true)
+            {
+                byteArray = HexStringToByteArray(textBox7.Text);
+            }
+            else
+            {
+                byteArray = System.Text.Encoding.Default.GetBytes(textBox7.Text);
+            }
+
+            int messageId = USR_PublishRawToUser(username, byteArray, byteArray.Length);
+            if (messageId > -1)
+            {
+                Log("消息已推送 MsgId:" + messageId.ToString(), true);
+            }
+        }
+
+        private void button14_Click(object sender, EventArgs e)
+        {
+            string devId = textBox11.Text;
+            int messageId = USR_SubscribeDevParsed(devId);
+            if (messageId > -1)
+            {
+                Log("订阅已发起  MsgId:" + messageId.ToString(), true);
+            }
+        }
+
+        private void button13_Click(object sender, EventArgs e)
+        {
+            string devId = textBox11.Text;
+            int messageId = USR_UnSubscribeDevParsed(devId);
+            if (messageId > -1)
+            {
+                Log("取消订阅已发起  MsgId:" + messageId.ToString(), true);
+            }
+        }
+
+        private void button12_Click(object sender, EventArgs e)
+        {
+            string userrname = textBox10.Text;
+            int messageId = USR_SubscribeUserParsed(userrname);
+            if (messageId > -1)
+            {
+                Log("订阅已发起  MsgId:" + messageId.ToString(), true);
+            }
+        }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+            string userrname = textBox10.Text;
+            int messageId = USR_UnSubscribeUserParsed(userrname);
+            if (messageId > -1)
+            {
+                Log("取消订阅已发起  MsgId:" + messageId.ToString(), true);
+            }
+        }
+
+        private void button16_Click(object sender, EventArgs e)
+        {
+            string devId = textBox14.Text;
+            string pointId = textBox13.Text;
+            int iMsgId = USR_PublishParsedQueryDataPoint(
+                devId, pointId);
+            if (iMsgId > -1)
+            {
+                Log("消息已推送 MsgId:" + iMsgId.ToString(), true);
+            }
+        }
+
+        private void button15_Click(object sender, EventArgs e)
+        {
+            string devId = textBox14.Text;
+            string pointId = textBox13.Text;
+            string value = textBox12.Text;
+            int iMsgId = USR_PublishParsedSetDataPoint(
+                devId, pointId, value);
+            if (iMsgId > -1)
+            {
+                Log("消息已推送 MsgId:" + iMsgId.ToString(), true);
+            }
+        }
     }
-
-
 }
