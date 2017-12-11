@@ -370,7 +370,7 @@
             this.textBox13.Name = "textBox13";
             this.textBox13.Size = new System.Drawing.Size(257, 21);
             this.textBox13.TabIndex = 11;
-            this.textBox13.Text = "432";
+            this.textBox13.Text = "118";
             // 
             // label13
             // 
