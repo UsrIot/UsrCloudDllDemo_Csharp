@@ -230,7 +230,7 @@ namespace UsrCloudDllDemo_Csharp
         {
             string sDevId = Marshal.PtrToStringAuto(DevId);
             string sJsonStr = Marshal.PtrToStringAuto(JsonStr);
-            Log("【设备数据点值推送事件】", true);
+            Log("【数据点值推送事件】", true);
             Log("设备ID   : " + sDevId);
             Log("MsgId    : " + messageID.ToString());
             Log("JSON数据: " + sJsonStr);
@@ -268,7 +268,7 @@ namespace UsrCloudDllDemo_Csharp
         {
             string sDevId = Marshal.PtrToStringAuto(DevId);
             string sJsonStr = Marshal.PtrToStringAuto(JsonStr);
-            Log("【设备数据点操作应答事件】", true);
+            Log("【数据点操作应答事件】", true);
             Log("设备ID   : " + sDevId);
             Log("MsgId    : " + messageID.ToString());
             Log("JSON数据: " + sJsonStr);
@@ -452,7 +452,27 @@ namespace UsrCloudDllDemo_Csharp
         public static extern bool USR_OnPubAck(TUSR_PubAckEvent OnPubAck);
 
         /// <summary>
-        /// 设置单台设备数据点值【云组态】
+        /// 设置数据点值【云组态】
+        /// </summary>
+        /// <param name="DevId"></param>
+        /// <param name="SlaveIndex"></param>
+        /// <param name="PointId"></param>
+        /// <param name="Value"></param>
+        /// <returns></returns>
+        [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_PublishParsedSetSlaveDataPoint", CallingConvention = CallingConvention.StdCall)]
+        public static extern int USR_PublishParsedSetSlaveDataPoint(string DevId, string SlaveIndex, string PointId, string Value);
+        /// <summary>
+        /// 查询数据点值【云组态】
+        /// </summary>
+        /// <param name="DevId"></param>
+        /// <param name="SlaveIndex"></param>
+        /// <param name="PointId"></param>
+        /// <returns></returns>
+        [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_PublishParsedQuerySlaveDataPoint", CallingConvention = CallingConvention.StdCall)]
+        public static extern int USR_PublishParsedQuerySlaveDataPoint(string DevId, string SlaveIndex, string PointId);
+
+        /// <summary>
+        /// 设置单台设备数据点值【云组态】 ---- 已弃, 用 USR_PublishParsedQuerySlaveDataPoint 代替
         /// </summary>
         /// <param name="DevId"></param>
         /// <param name="PointId"></param>
@@ -461,7 +481,7 @@ namespace UsrCloudDllDemo_Csharp
         [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_PublishParsedSetDataPoint", CallingConvention = CallingConvention.StdCall)]
         public static extern int USR_PublishParsedSetDataPoint(string DevId, string PointId, string Value);
         /// <summary>
-        /// 查询单台设备数据点值【云组态】
+        /// 查询单台设备数据点值【云组态】 ---- 已弃, 用 USR_PublishParsedQuerySlaveDataPoint 代替
         /// </summary>
         /// <param name="DevId"></param>
         /// <param name="PointId"></param>
@@ -504,7 +524,7 @@ namespace UsrCloudDllDemo_Csharp
         /// <param name="JsonStr"></param>
         public delegate void TUSR_RcvParsedEvent(int MessageID, IntPtr DevId, IntPtr JsonStr);
         /// <summary>
-        /// 设置 接收设备数据点推送 回调函数 【云组态】
+        /// 设置 接收数据点推送 回调函数 【云组态】
         /// </summary>
         /// <param name="OnRcvParsed"></param>
         /// <returns></returns>
@@ -525,7 +545,7 @@ namespace UsrCloudDllDemo_Csharp
         [DllImport("UsrCloud.dll", CharSet = CharSet.Auto, EntryPoint = "USR_OnRcvParsedDevAlarmPush", CallingConvention = CallingConvention.StdCall)]
         public static extern bool USR_OnRcvParsedDevAlarmPush(TUSR_RcvParsedEvent OnRcvParsed);
         /// <summary>
-        /// 设置 接收设备数据点操作应答 【云组态】
+        /// 设置 接收数据点操作应答 【云组态】
         /// </summary>
         /// <param name="OnRcvParsed"></param>
         /// <returns></returns>
@@ -656,9 +676,10 @@ namespace UsrCloudDllDemo_Csharp
         private void button16_Click(object sender, EventArgs e)
         {
             string devId = textBox14.Text;
+            string slaveIndex = textBox16.Text;
             string pointId = textBox13.Text;
-            int iMsgId = USR_PublishParsedQueryDataPoint(
-                devId, pointId);
+            int iMsgId = USR_PublishParsedQuerySlaveDataPoint(
+                devId, slaveIndex, pointId);
             if (iMsgId > -1)
             {
                 Log("消息已推送 MsgId:" + iMsgId.ToString(), true);
@@ -668,10 +689,11 @@ namespace UsrCloudDllDemo_Csharp
         private void button15_Click(object sender, EventArgs e)
         {
             string devId = textBox14.Text;
+            string slaveIndex = textBox16.Text;
             string pointId = textBox13.Text;
             string value = textBox12.Text;
-            int iMsgId = USR_PublishParsedSetDataPoint(
-                devId, pointId, value);
+            int iMsgId = USR_PublishParsedSetSlaveDataPoint(
+                devId, slaveIndex, pointId, value);
             if (iMsgId > -1)
             {
                 Log("消息已推送 MsgId:" + iMsgId.ToString(), true);

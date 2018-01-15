@@ -92,6 +92,8 @@
             this.textBox5 = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.linkLabel3 = new System.Windows.Forms.LinkLabel();
+            this.textBox16 = new System.Windows.Forms.TextBox();
+            this.label16 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -330,6 +332,8 @@
             // 
             // groupBox6
             // 
+            this.groupBox6.Controls.Add(this.textBox16);
+            this.groupBox6.Controls.Add(this.label16);
             this.groupBox6.Controls.Add(this.textBox15);
             this.groupBox6.Controls.Add(this.label15);
             this.groupBox6.Controls.Add(this.textBox13);
@@ -350,7 +354,7 @@
             // textBox15
             // 
             this.textBox15.Enabled = false;
-            this.textBox15.Location = new System.Drawing.Point(188, 120);
+            this.textBox15.Location = new System.Drawing.Point(188, 132);
             this.textBox15.Name = "textBox15";
             this.textBox15.Size = new System.Drawing.Size(257, 21);
             this.textBox15.TabIndex = 13;
@@ -358,7 +362,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(117, 123);
+            this.label15.Location = new System.Drawing.Point(117, 135);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(65, 12);
             this.label15.TabIndex = 12;
@@ -366,7 +370,7 @@
             // 
             // textBox13
             // 
-            this.textBox13.Location = new System.Drawing.Point(188, 44);
+            this.textBox13.Location = new System.Drawing.Point(188, 65);
             this.textBox13.Name = "textBox13";
             this.textBox13.Size = new System.Drawing.Size(257, 21);
             this.textBox13.TabIndex = 11;
@@ -375,7 +379,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(117, 50);
+            this.label13.Location = new System.Drawing.Point(117, 71);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(53, 12);
             this.label13.TabIndex = 10;
@@ -387,13 +391,13 @@
             this.button15.Name = "button15";
             this.button15.Size = new System.Drawing.Size(414, 38);
             this.button15.TabIndex = 9;
-            this.button15.Text = "USR_PublishParsedSetDataPoint  设置单台设备数据点值";
+            this.button15.Text = "USR_PublishParsedSetSlaveDataPoint  设置数据点值";
             this.button15.UseVisualStyleBackColor = true;
             this.button15.Click += new System.EventHandler(this.button15_Click);
             // 
             // textBox12
             // 
-            this.textBox12.Location = new System.Drawing.Point(188, 155);
+            this.textBox12.Location = new System.Drawing.Point(188, 159);
             this.textBox12.Name = "textBox12";
             this.textBox12.Size = new System.Drawing.Size(257, 21);
             this.textBox12.TabIndex = 8;
@@ -402,7 +406,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(117, 158);
+            this.label12.Location = new System.Drawing.Point(117, 162);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(65, 12);
             this.label12.TabIndex = 7;
@@ -410,11 +414,11 @@
             // 
             // button16
             // 
-            this.button16.Location = new System.Drawing.Point(31, 71);
+            this.button16.Location = new System.Drawing.Point(31, 89);
             this.button16.Name = "button16";
             this.button16.Size = new System.Drawing.Size(414, 38);
             this.button16.TabIndex = 5;
-            this.button16.Text = "USR_PublishParsedQueryDataPoint  查询单台设备数据点值";
+            this.button16.Text = "USR_PublishParsedQuerySlaveDataPoint  查询数据点值";
             this.button16.UseVisualStyleBackColor = true;
             this.button16.Click += new System.EventHandler(this.button16_Click);
             // 
@@ -533,7 +537,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(506, 503);
+            this.tabPage2.Size = new System.Drawing.Size(477, 503);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "|------------- 云交换机 -------------|";
             this.tabPage2.ToolTipText = "操作原始数据流";
@@ -743,6 +747,23 @@
             this.linkLabel3.Text = "透传云控制台";
             this.linkLabel3.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel3_LinkClicked);
             // 
+            // textBox16
+            // 
+            this.textBox16.Location = new System.Drawing.Point(188, 41);
+            this.textBox16.Name = "textBox16";
+            this.textBox16.Size = new System.Drawing.Size(257, 21);
+            this.textBox16.TabIndex = 15;
+            this.textBox16.Text = "1";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(117, 47);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(53, 12);
+            this.label16.TabIndex = 14;
+            this.label16.Text = "从机序号";
+            // 
             // FormCloudDllDemo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -845,6 +866,8 @@
         private System.Windows.Forms.TextBox textBox14;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.LinkLabel linkLabel3;
+        private System.Windows.Forms.TextBox textBox16;
+        private System.Windows.Forms.Label label16;
     }
 }
 
