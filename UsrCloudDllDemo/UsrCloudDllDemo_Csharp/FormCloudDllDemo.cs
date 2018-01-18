@@ -39,8 +39,8 @@ namespace UsrCloudDllDemo_Csharp
         //初始化   
         private void buttonInit_Click(object sender, EventArgs e)
         {
-            string ip = textBox1.Text;
-            ushort port = Convert.ToUInt16(textBox2.Text);
+            string ip = "clouddata.usr.cn";//透传云服务器地址, 打死都不改
+            ushort port = 1883;//透传云服务器端口, 打死都不改
             int vertion = 1;
             if (USR_Init(ip, port, vertion))
             {

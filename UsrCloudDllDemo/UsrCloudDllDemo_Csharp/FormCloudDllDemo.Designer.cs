@@ -33,10 +33,6 @@
             this.button4 = new System.Windows.Forms.Button();
             this.buttonRelease = new System.Windows.Forms.Button();
             this.buttonInit = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.button6 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
@@ -52,6 +48,8 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.textBox16 = new System.Windows.Forms.TextBox();
+            this.label16 = new System.Windows.Forms.Label();
             this.textBox15 = new System.Windows.Forms.TextBox();
             this.label15 = new System.Windows.Forms.Label();
             this.textBox13 = new System.Windows.Forms.TextBox();
@@ -92,8 +90,6 @@
             this.textBox5 = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.linkLabel3 = new System.Windows.Forms.LinkLabel();
-            this.textBox16 = new System.Windows.Forms.TextBox();
-            this.label16 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -110,10 +106,6 @@
             this.groupBox1.Controls.Add(this.button4);
             this.groupBox1.Controls.Add(this.buttonRelease);
             this.groupBox1.Controls.Add(this.buttonInit);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.textBox2);
-            this.groupBox1.Controls.Add(this.textBox1);
-            this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Location = new System.Drawing.Point(20, 16);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(477, 101);
@@ -123,9 +115,9 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(375, 12);
+            this.button4.Location = new System.Drawing.Point(64, 15);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(80, 80);
+            this.button4.Size = new System.Drawing.Size(114, 80);
             this.button4.TabIndex = 6;
             this.button4.Text = "USR_GetVer 查看DLL版本";
             this.button4.UseVisualStyleBackColor = true;
@@ -135,7 +127,7 @@
             // 
             this.buttonRelease.Location = new System.Drawing.Point(198, 54);
             this.buttonRelease.Name = "buttonRelease";
-            this.buttonRelease.Size = new System.Drawing.Size(171, 38);
+            this.buttonRelease.Size = new System.Drawing.Size(257, 38);
             this.buttonRelease.TabIndex = 5;
             this.buttonRelease.Text = "USR_Release 释放";
             this.buttonRelease.UseVisualStyleBackColor = true;
@@ -145,45 +137,11 @@
             // 
             this.buttonInit.Location = new System.Drawing.Point(198, 11);
             this.buttonInit.Name = "buttonInit";
-            this.buttonInit.Size = new System.Drawing.Size(171, 38);
+            this.buttonInit.Size = new System.Drawing.Size(257, 38);
             this.buttonInit.TabIndex = 4;
             this.buttonInit.Text = "USR_Init 初始化";
             this.buttonInit.UseVisualStyleBackColor = true;
             this.buttonInit.Click += new System.EventHandler(this.buttonInit_Click);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(26, 68);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(29, 12);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "端口";
-            // 
-            // textBox2
-            // 
-            this.textBox2.Location = new System.Drawing.Point(64, 61);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(114, 21);
-            this.textBox2.TabIndex = 2;
-            this.textBox2.Text = "1883";
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(64, 21);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(114, 21);
-            this.textBox1.TabIndex = 1;
-            this.textBox1.Text = "clouddata.usr.cn";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(16, 25);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(41, 12);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "服务器";
             // 
             // groupBox2
             // 
@@ -350,6 +308,23 @@
             this.groupBox6.TabIndex = 6;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "★推送";
+            // 
+            // textBox16
+            // 
+            this.textBox16.Location = new System.Drawing.Point(188, 41);
+            this.textBox16.Name = "textBox16";
+            this.textBox16.Size = new System.Drawing.Size(257, 21);
+            this.textBox16.TabIndex = 15;
+            this.textBox16.Text = "1";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(117, 47);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(53, 12);
+            this.label16.TabIndex = 14;
+            this.label16.Text = "从机序号";
             // 
             // textBox15
             // 
@@ -747,23 +722,6 @@
             this.linkLabel3.Text = "透传云控制台";
             this.linkLabel3.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel3_LinkClicked);
             // 
-            // textBox16
-            // 
-            this.textBox16.Location = new System.Drawing.Point(188, 41);
-            this.textBox16.Name = "textBox16";
-            this.textBox16.Size = new System.Drawing.Size(257, 21);
-            this.textBox16.TabIndex = 15;
-            this.textBox16.Text = "1";
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(117, 47);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(53, 12);
-            this.label16.TabIndex = 14;
-            this.label16.Text = "从机序号";
-            // 
             // FormCloudDllDemo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -782,7 +740,6 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "UsrCloud.dll Demo";
             this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.tabControl1.ResumeLayout(false);
@@ -810,10 +767,6 @@
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button buttonRelease;
         private System.Windows.Forms.Button buttonInit;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.TextBox textBox4;
