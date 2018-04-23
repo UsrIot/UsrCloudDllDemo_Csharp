@@ -173,8 +173,10 @@ namespace UsrCloudDllDemo_Csharp
 
         private void ConnAck_CBF(int returnCode, IntPtr description)
         {
-            Log("【连接事件】", true);
-            Log("returnCode: " + returnCode.ToString() + "  " + Marshal.PtrToStringAuto(description));
+            string sLog =
+                 "【连接事件】" + "\n" +
+                 "returnCode: " + returnCode.ToString() + "  " + Marshal.PtrToStringAuto(description);
+            Log(sLog);
             if (returnCode == 0)
             {
                 Log("连接成功");
@@ -196,14 +198,16 @@ namespace UsrCloudDllDemo_Csharp
             string[] SubParamArray = sSubParam.Split(',');
             string[] retCodeArray = sReturnCode.Split(',');
             int len = SubParamArray.Length;
-            Log("【订阅事件】", true);
-            Log("MsgId:" + messageID.ToString());
-            Log("函数名称:" + sSubFunName);
+            string sLog =
+               "【订阅事件】" + "\n" +
+               "MsgId:" + messageID.ToString() + "\n" +
+               "函数名称:" + sSubFunName + "\n";
             for (int i = 0; i < len; ++i)
             {
-                Log("设备ID(或用户名)：" + SubParamArray[i] +
-                 "  订阅结果：" + retCodeArray[i]);
+                sLog += "设备ID(或用户名)：" + SubParamArray[i] + "\n" +
+                 "  订阅结果：" + retCodeArray[i] + "\n";
             }
+            Log(sLog, true);
         }
 
         /* 自定义回调函数,用于判断取消订阅结果 */
@@ -211,17 +215,21 @@ namespace UsrCloudDllDemo_Csharp
         {
             string sUnSubFunName = Marshal.PtrToStringAuto(UnSubFunName);
             string sUnSubParam = Marshal.PtrToStringAuto(UnSubParam);
-            Log("【取消订阅事件】", true);
-            Log("MsgId:" + messageID.ToString());
-            Log("函数名称：" + sUnSubFunName);
-            Log("设备ID或用户名：" + sUnSubParam);
+            string sLog =
+               "【取消订阅事件】" + "\n" +
+               "MsgId:" + messageID.ToString() + "\n" +
+               "函数名称：" + sUnSubFunName + "\n" +
+               "设备ID或用户名：" + sUnSubParam;
+            Log(sLog, true);
         }
 
 
         protected void PubAck_CBF(int messageID)
-        {
-            Log("【推送回调】", true);
-            Log("MsgId:" + messageID.ToString());
+        { 
+            string sLog =
+                "【推送回调事件】\n" +
+                "MsgId    : " + messageID.ToString();
+            Log(sLog, true);
         }
 
         /* 自定义回调函数,用于接收数据点值推送 */
@@ -230,11 +238,12 @@ namespace UsrCloudDllDemo_Csharp
         {
             string sDevId = Marshal.PtrToStringAuto(DevId);
             string sJsonStr = Marshal.PtrToStringAuto(JsonStr);
-            Log("【数据点值推送事件】", true);
-            Log("设备ID   : " + sDevId);
-            Log("MsgId    : " + messageID.ToString());
-            Log("JSON数据: " + sJsonStr);
-
+            string sLog =
+                "【数据点值推送事件】\n" +
+                "设备ID   : " + sDevId + "\n" +
+                "MsgId    : " + messageID.ToString() + "\n" +
+                "JSON数据: " + sJsonStr;
+            Log(sLog, true);
             //todo json解析
         }
 
@@ -244,10 +253,12 @@ namespace UsrCloudDllDemo_Csharp
         {
             string sDevId = Marshal.PtrToStringAuto(DevId);
             string sJsonStr = Marshal.PtrToStringAuto(JsonStr);
-            Log("【设备上下线推送事件】", true);
-            Log("设备ID   : " + sDevId);
-            Log("MsgId    : " + messageID.ToString());
-            Log("JSON数据: " + sJsonStr);
+            string sLog =
+                "【设备上下线推送事件】\n" +
+                "设备ID   : " + sDevId + "\n" +
+                "MsgId    : " + messageID.ToString() + "\n" +
+                "JSON数据: " + sJsonStr;
+            Log(sLog, true);
         }
 
         /* 自定义回调函数,用于接收报警推送 */
@@ -256,10 +267,12 @@ namespace UsrCloudDllDemo_Csharp
         {
             string sDevId = Marshal.PtrToStringAuto(DevId);
             string sJsonStr = Marshal.PtrToStringAuto(JsonStr);
-            Log("【设备报警推送事件】", true);
-            Log("设备ID   : " + sDevId);
-            Log("MsgId    : " + messageID.ToString());
-            Log("JSON数据: " + sJsonStr);
+            string sLog =
+                "【设备报警推送事件】\n" +
+                "设备ID   : " + sDevId + "\n" +
+                "MsgId    : " + messageID.ToString() + "\n" +
+                "JSON数据: " + sJsonStr;
+            Log(sLog, true);
         }
 
         /* 自定义回调函数,用于接收数据点操作应答 */
@@ -268,10 +281,12 @@ namespace UsrCloudDllDemo_Csharp
         {
             string sDevId = Marshal.PtrToStringAuto(DevId);
             string sJsonStr = Marshal.PtrToStringAuto(JsonStr);
-            Log("【数据点操作应答事件】", true);
-            Log("设备ID   : " + sDevId);
-            Log("MsgId    : " + messageID.ToString());
-            Log("JSON数据: " + sJsonStr);
+            string sLog =
+                "【数据点操作应答事件】\n" +
+                "设备ID   : " + sDevId + "\n" +
+                "MsgId    : " + messageID.ToString() + "\n" +
+                "JSON数据: " + sJsonStr;
+            Log(sLog,true);
         }
 
         /* 自定义回调函数,用于接收设备原始数据流 */
@@ -283,10 +298,12 @@ namespace UsrCloudDllDemo_Csharp
             Marshal.Copy(pData, byteArr, 0, DataLen);
             string sHex = BitConverter.ToString(byteArr).Replace(
                 "-", " ");
-            Log("【接收数据流事件】", true);
-            Log("设备ID   : " + sDevId);
-            Log("MsgId    : " + messageID.ToString());
-            Log("接收数据(Hex): " + sHex);
+            string sLog =
+                "【接收数据流事件】\n" +
+                "设备ID   : " + sDevId + "\n" +
+                "MsgId    : " + messageID.ToString() + "\n" +
+                "接收数据(Hex): " + sHex;
+            Log(sLog,true);
         }
 
 
